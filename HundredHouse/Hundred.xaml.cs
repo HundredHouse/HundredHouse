@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +15,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml;
+using Excel = Microsoft.Office.Interop.Excel;
+
+
 
 namespace HundredHouse
 {
@@ -128,9 +132,91 @@ namespace HundredHouse
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
 			RequestGet();
+		}
+
+		private void ExcelDownload(object sender, RoutedEventArgs e)
+		{
+			if( this.mList == null ||  this.mList.Count <= 0 )
+			{
+				var result = MessageBox.Show("조회된 데이터가 없습니다.");
+				return;
+			}
+
+			Excel.Application excelApp = null;
+			Excel.Workbook wb = null;
+			Excel.Worksheet ws = null;
+
+			try
+			{
+				// Excel 첫번째 워크시트 가져오기                
+				excelApp = new Excel.Application();
+				wb = excelApp.Workbooks.Add();
+				excelApp.DisplayAlerts = true;
+				ws = wb.Worksheets.get_Item(1) as Excel.Worksheet;
+
+				ws.Cells[1, 1] = "지역명";
+				ws.Cells[1, 2] = "매매평단가";
+
+				// 데이타 넣기
+				int r = 2;
+				foreach ( var d in mList )
+				{
+					ws.Cells[r, 1] = d.ReasonName;
+					ws.Cells[r, 2] = d.TextAmtPerField;
+					r++;
+				}
+
+				// 엑셀파일 저장
+				wb.SaveAs(@"C:\100House.xls", 
+					Excel.XlFileFormat.xlWorkbookNormal, 
+					Type.Missing, 
+					Type.Missing,
+					Type.Missing,
+					Type.Missing,
+					Excel.XlSaveAsAccessMode.xlExclusive,
+					Type.Missing,					
+					Type.Missing,
+					Type.Missing
+					);
+				wb.Close(true);
+				excelApp.Quit();
+			}
+			finally
+			{
+				// Clean up
+				ReleaseExcelObject(ws);
+				ReleaseExcelObject(wb);
+				ReleaseExcelObject(excelApp);
+			}
+		}
+
+		private static void ReleaseExcelObject(object obj)
+		{
+			try
+			{
+				if ( obj != null )
+				{
+					Marshal.ReleaseComObject(obj);
+					obj = null;
+				}
+			}
+			catch ( Exception ex )
+			{
+				obj = null;
+				throw ex;
+			}
+			finally
+			{
+				GC.Collect();
+			}
 		}
 	}
 

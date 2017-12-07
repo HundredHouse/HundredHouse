@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HundredHouse"
+		WindowStyle="SingleBorderWindow"
         mc:Ignorable="d"
-        Title="부동산 114 평단가" Height="700" Width="600">
+        Title="부동산 평단가" Height="700" Width="600" Background="Gray">
 	<Grid>
 		<Grid>
 
@@ -29,12 +30,12 @@
 			Width="100"
 			Height="50"
 				Grid.Column="1"
-			Content="엑셀다운로드" Click="Button_Click"  />
+			Content="엑셀다운로드" Click="ExcelDownload"  />
 
-			<Grid Grid.Row="1">
+			<Grid Grid.Row="1" Grid.ColumnSpan="2" Background="Beige">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="150"/>
-					<ColumnDefinition Width="100"/>
+					<ColumnDefinition Width="150"/>
 				</Grid.ColumnDefinitions>
 				<Grid.Resources>					
 					<Style x:Name="title" TargetType="TextBlock">
@@ -45,19 +46,19 @@
 				</Grid.Resources>				
 
 				<TextBlock Grid.Column="0" Text="지역명"/>
-				<TextBlock Grid.Column="1" Text="평단가"/>
+				<TextBlock Grid.Column="1" Text="매매 평단가" />
 			</Grid>
 
 			
 
-			<ListBox x:Name="grid" Grid.Row="2" >
+			<ListBox x:Name="grid" Grid.Row="2" Grid.ColumnSpan="2">
 				<ListBox.ItemTemplate>
 					<DataTemplate >
 
 						<Grid>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="150"/>
-								<ColumnDefinition Width="100"/>
+								<ColumnDefinition Width="150"/>
 							</Grid.ColumnDefinitions>									
 
 							<TextBlock Grid.Column="0" Text="{Binding ReasonName}" />
